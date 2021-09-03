@@ -79,7 +79,7 @@ export default {
           {name: '#code', connected: false, highlighted: false, active: false, buffer: [], newText: false, scrollStick: true, history: [], users: [], topic: '', showServerMessages: false}
         ],
         supressFooter: false,
-        //defaultIRCHost: 'irc.whitehotrobot.com',
+        //defaultIRCHost: 'irc.dweet.net',
         //defaultIRCPort: 6667,
         baseURL: 'https://appliedlearning.academy',
         rootDomain: 'appliedlearning.academy',
@@ -95,7 +95,7 @@ export default {
         ],
         channelChange: false,
         footerText: 'the footer',
-        defaultIRCHost: 'irc.whitehotrobot.com',
+        defaultIRCHost: 'irc.dweet.net',
         defaultIRCNick: 'whr_' + (10+Math.random()*89|0),
         defaultIRCPort: 6667,
         defaultPassword: '',
@@ -164,7 +164,7 @@ export default {
         extractEmbedURL: null,
         openFullscreen: null,
         invalidLoginAttempt: false,
-        defaultAvatar: 'https://lookie.jsbot.net/uploads/1pnBdc.png',
+        defaultAvatar: 'https://jsbot.cantelope.org/uploads/1pnBdc.png',
         showControlsToggleTimer: 0,
         closeMenus: 0
       }
@@ -865,7 +865,7 @@ export default {
             //this.state.defaultIRCHost = msg.split(':')[1].split(' ')[0]
           }
 
-          if(msg.toUpperCase().indexOf('FOUND YOUR HOSTNAME') !== -1){
+          if(msg.toUpperCase().indexOf('FOUND YOUR HOSTNAME') !== -1 || msg.toUpperCase().indexOf('COULDN\'T LOOK UP YOUR HOSTNAME') !== -1){
             console.log('sending initial NICK command: NICK ' + this.state.nick)
             setTimeout(()=>{
               this.sendToServer('client_message', 'USER ' + this.state.nick + ' 0 * :' + this.state.nick)
