@@ -355,7 +355,7 @@ export default {
             if(+data[3]) this.state.isAdmin = true
             this.state.maxResultsPerPage = +data[4]
             //this.startRandomText()
-            this.state.nick = this.state.defaultIRCNick = this.state.loggedinUserName.replace(' ', '_')
+            this.state.nick = this.state.defaultIRCNick = this.state.loggedinUserName.replaceAll(' ', '_')
             //this.state.nick = this.getNick()
           }else{
             this.state.loggedin = false
@@ -473,7 +473,7 @@ export default {
       if(typeof this.state.userInfo[id] == 'undefined' || !this.state.userInfo[id].avatar){
         return this.state.defaultAvatar
       } else {
-        this.state.userInfo[id].avatar = this.state.userInfo[id].avatar.replace(' ','')
+        this.state.userInfo[id].avatar = this.state.userInfo[id].avatar.replaceAll(' ','')
         return this.state.userInfo[id].avatar
       }
     },
@@ -516,19 +516,19 @@ export default {
       if(text.substring(0, 5).toUpperCase() == '/MSG '){
         let joinChan = text.substring(5)
         let text1 = text.split(' ').filter(v=>v).join(' ')
-        let tgt = text1.split(' ')[1].replace("\n", '').replace("\r",'').trim()
+        let tgt = text1.split(' ')[1].replaceAll("\n", '').replaceAll("\r",'').trim()
         console.log('tgt: ' + tgt)
         let sendText = text.split(' ').filter(v=>v).filter((v,i)=>i>1).join(' ')
         if(sendText){
           let newChan
           if(tgt){
-            if(this.state.channels.filter(v=>v.name.toUpperCase().replace("\n", '').replace("\r",'').trim() == tgt.toUpperCase()).length == 0){
+            if(this.state.channels.filter(v=>v.name.toUpperCase().replaceAll("\n", '').replaceAll("\r",'').trim() == tgt.toUpperCase()).length == 0){
               newChan = JSON.parse(JSON.stringify(this.state.channelTemplate))
               newChan.name = tgt
               if(newChan.name.toUpperCase() == 'PY-CTCP') return
               this.state.channels.push(newChan)
             } else {
-              newChan = this.state.channels.filter(v=>v.name.toUpperCase().replace("\n", '').replace("\r",'').trim() == tgt.toUpperCase())[0]
+              newChan = this.state.channels.filter(v=>v.name.toUpperCase().replaceAll("\n", '').replaceAll("\r",'').trim() == tgt.toUpperCase())[0]
             }
             this.pushToBuffer(newChan, '&lt;' + this.state.nick + '&gt; ' + sendText, 'privmsg')
             setTimeout(()=>{
@@ -641,7 +641,7 @@ export default {
       this.state.channels[id].connected = typeof connected !== 'undefined' ? connected : this.state.channels[id].connected
     },
     setActiveChannelByName(name, connected){
-      name = name.replace("\r", '').replace("\n", '').trim()
+      name = name.replaceAll("\r", '').replaceAll("\n", '').trim()
       this.state.channels.map(v=>{v.active = false})
       //this.state.channels.map(v=>{this.$set(v, 'active', false)})
       let chan = this.state.channels.filter(v=>v.name.toUpperCase() == name.toUpperCase())[0]
@@ -651,7 +651,7 @@ export default {
       //this.$set(chan, 'connected', typeof connected !== 'undefined' ? connected : chan.connected)
       /*
       this.state.channels.map(v=>{
-        if(v.name.toUpperCase().replace("\n", '').replace("\r",'').trim() == name.toUpperCase()){
+        if(v.name.toUpperCase().replaceAll("\n", '').replaceAll("\r",'').trim() == name.toUpperCase()){
           v.active = true
           v.connected = typeof connected !== 'undefined' ? connected : v.connected
         }
@@ -659,7 +659,7 @@ export default {
       */
     },
     createChannel(name){
-      name = name.trim().replace("\r", '').replace("\n", '')
+      name = name.trim().replaceAll("\r", '').replaceAll("\n", '')
       if(name.toUpperCase() == 'PY-CTCP') return
       let newChannel = JSON.parse(JSON.stringify(this.state.channelTemplate))
       newChannel.name = name
@@ -668,12 +668,12 @@ export default {
       this.makeChannelsReactive()
     },
     joinChannel(name){
-      name = name.replace("\r", '').replace("\n", '').trim()
+      name = name.replaceAll("\r", '').replaceAll("\n", '').trim()
       if(!name) {
         console.log('oops')
         return
       }
-      if(!this.state.channels.filter(v=>v.name.toUpperCase().replace("\n", '').replace("\r",'').trim() == name.toUpperCase()).length){
+      if(!this.state.channels.filter(v=>v.name.toUpperCase().replaceAll("\n", '').replaceAll("\r",'').trim() == name.toUpperCase()).length){
         this.createChannel(name)
       }
       let msg = 'JOIN ' + name
@@ -698,8 +698,8 @@ export default {
         break
         case 'mode':
           if(msg.split(':')[1].split(' ').length > 4){
-            from = msg.split(':')[1].split('!')[0].split(' ')[0].replace("\n", '').replace("\r", '').trim()
-            to = msg.split(':')[1].split(' ')[4].replace("\n", '').replace("\r", '').trim()
+            from = msg.split(':')[1].split('!')[0].split(' ')[0].replaceAll("\n", '').replaceAll("\r", '').trim()
+            to = msg.split(':')[1].split(' ')[4].replaceAll("\n", '').replaceAll("\r", '').trim()
             let mode = msg.split(':')[1].split(' ')[3]
             let modeChan = msg.split(':')[1].split(' ')[2]
             this.pushToBuffer(this.curChannel, from + ' has set mode ' + mode + ' to ' + to, 'mode')
@@ -707,8 +707,8 @@ export default {
           }
         break
         case 'nick':
-          let oldNick = msg.split(':')[1].split('!')[0].split(' ')[0].replace("\r", '').replace("\r", '').trim()
-          let newNick = msg.split(':')[2].replace("\r", '').replace("\r", '').trim()
+          let oldNick = msg.split(':')[1].split('!')[0].split(' ')[0].replaceAll("\r", '').replaceAll("\r", '').trim()
+          let newNick = msg.split(':')[2].replaceAll("\r", '').replaceAll("\r", '').trim()
           console.log('nick change detected: ' + oldNick + ' ' + newNick)
           if(oldNick.toUpperCase() == this.getNick().toUpperCase()){
             this.state.nick = newNick
@@ -743,7 +743,7 @@ export default {
           }
           if(msg.split(':').length > 1 && msg.split(':')[1].split(' ').length && msg.split(':')[1].split(' ')[1]=='332'){ // channel topic
             let chanName = msg.split(':')[1].split(' ')[3]
-            this.state.channels.filter(v=>v.name.toUpperCase() == chanName.toUpperCase())[0].topic = serverMsg.replace('<', '&lt;')
+            this.state.channels.filter(v=>v.name.toUpperCase() == chanName.toUpperCase())[0].topic = serverMsg.replaceAll('<', '&lt;')
           }
           if(msg.substring(0, 19) == 'ERROR :Closing Link'){
             setTimeout(()=>{
@@ -812,11 +812,11 @@ export default {
           this.pushToBuffer(chan, topicChanger + ' has changed the topic to: ' + serverMsg, 'status')
         break
         case 'privmsg':
-          from = msg.split(':')[1].split('!')[0].split(' ')[0].replace("\n", '').replace("\r", '').trim()
-          to = msg.split(':')[1].split(' ')[2].replace("\n", '').replace("\r", '').trim()
+          from = msg.split(':')[1].split('!')[0].split(' ')[0].replaceAll("\n", '').replaceAll("\r", '').trim()
+          to = msg.split(':')[1].split(' ')[2].replaceAll("\n", '').replaceAll("\r", '').trim()
           console.log('privmsg detected: from: ' + from + '  to: ' + to)
           text = msg.substring(msg.split(':')[1].lastIndexOf('PRIVMSG') + 11 + to.length)
-          if(text.length) text = text.replace(`<`, '&lt;')
+          if(text.length) text = text.replaceAll(`<`, '&lt;')
           if(this.state.channels.filter(v=>v.name.toUpperCase()==to.toUpperCase()).length){
             this.pushToBuffer(this.state.channels.filter(v=>v.name.toUpperCase()==to.toUpperCase())[0], '&lt;' + from + '&gt; ' + text, 'privmsg')
           }
@@ -850,7 +850,7 @@ export default {
           console.log('notice detected: from: ' + from + '  to: ' + to)
           
           text = msg.substring(msg.split(':')[1].lastIndexOf('NOTICE') + 8 +to.length)
-          if(text.length) text = text.replace(`<`, '&lt;')
+          if(text.length) text = text.replaceAll(`<`, '&lt;')
           if(this.state.channels.filter(v=>v.name.toUpperCase()==to.toUpperCase() || to=='*').length){
             this.pushToBuffer(this.state.channels[this.curChannelId], '&lt;' + from + '&gt; ' + text, 'notice')
             noticeHandled = true
@@ -881,7 +881,7 @@ export default {
         case 'part':
           let partChan = msg.split(':')
           if(partChan.length>2){
-            partChan = partChan[2].replace("\r", '').replace("\n", '').trim()
+            partChan = partChan[2].replaceAll("\r", '').replaceAll("\n", '').trim()
           }else{
             partChan = this.curChannelName
           }
@@ -899,9 +899,9 @@ export default {
         case 'join':
           let joinChan
           if(typeof msg.split(':')[2] == 'undefined'){
-            joinChan = msg.split(':')[1].split(' ')[2].replace("\r", '').replace("\n", '').trim()
+            joinChan = msg.split(':')[1].split(' ')[2].replaceAll("\r", '').replaceAll("\n", '').trim()
           } else {
-            joinChan = msg.split(':')[2].replace("\r", '').replace("\n", '').trim()
+            joinChan = msg.split(':')[2].replaceAll("\r", '').replaceAll("\n", '').trim()
           }
           let joinUser = msg.split(':')[1].split('!')[0].split(' ')[0]
           if(joinUser.toUpperCase().trim() == this.state.getNick().toUpperCase()){ //joining user is self
@@ -929,7 +929,7 @@ export default {
           case 'server_message':
             let res = response.message
             res.split("\n").map(msg=>{
-              msg = msg.replace("\r",'').replace("\n",'')
+              msg = msg.replaceAll("\r",'').replaceAll("\n",'')
               if(msg.length > 1){
                 console.log('server: ', msg)
                 this.doActions(msg)
@@ -980,7 +980,7 @@ export default {
     },
     rawNick(nick){
       this.state.userModes.map(v=>{
-        nick = nick.replace(v.prefix, '')
+        nick = nick.replaceAll(v.prefix, '')
       })
       return nick
     },
